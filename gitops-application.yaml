@@ -6,14 +6,14 @@ metadata:
   labels:
     argocd.argoproj.io/instance: openshift-gitops
 spec:
-  project: ols-git-project
+  project: default
   source:
     repoURL: 'https://github.com/dialvare/ols-git-mcp'
     targetRevision: main
     path: overlays/prod
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: git-mcp
+    namespace: git-apps-project
   syncPolicy:
     automated:
       prune: true
