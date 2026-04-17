@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sample-app-mcp
+  name: sample-app
   namespace: openshift-gitops
   labels:
     argocd.argoproj.io/instance: openshift-gitops
 spec:
-  project: default
+  project: ols-git-project
   source:
-    repoURL: 'https://github.com/dialvare/sample-app-mcp'
+    repoURL: 'https://github.com/dialvare/ols-git-mcp'
     targetRevision: main
     path: overlays/prod
   destination:
