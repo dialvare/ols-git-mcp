@@ -1,0 +1,54 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: git-mcp
+---
+apiVersion: v1
+kind: Pod
+metadata:
+ name: sample-app-mcp
+ namespace: git-mcp
+ annotations:
+   app.github.com/repo-url: "https://github.com/dialvare/sample-app-mcp"
+   app.openshift.io/vcs-ref: "main"
+   app.openshift.io/vcs-path: "sample-app-mcp.yaml"
+spec:
+ containers:
+ - image: quay.io/sclorg/httpd-24-micro-c9s
+   imagePullPolicy: IfNotPresent
+   name: broken-container
+   ports:
+   - containerPort: 8080
+     protocol: TCP
+   resources: {}
+   securityContext:
+     allowPrivilegeEscalation: false
+     capabilities:
+       drop:
+       - ALL
+     runAsNonRoot: true
+   terminationMessagePath: /dev/termination-log
+   terminationMessagePolicy: File
+ dnsPolicy: ClusterFirst
+ enableServiceLinks: true
+ nodeSelector:
+   node-role.kubernetes.io/wrker: ""
+ preemptionPolicy: PreemptLowerPriority
+ priority: 0
+ restartPolicy: Always
+ schedulerName: default-scheduler
+ securityContext:
+   seccompProfile:
+     type: RuntimeDefault
+ serviceAccount: default
+ serviceAccountName: default
+ terminationGracePeriodSeconds: 30
+ tolerations:
+ - effect: NoExecute
+   key: node.kubernetes.io/not-ready
+   operator: Exists
+   tolerationSeconds: 300
+ - effect: NoExecute
+   key: node.kubernetes.io/unreachable
+   operator: Exists
+   tolerationSeconds: 300
