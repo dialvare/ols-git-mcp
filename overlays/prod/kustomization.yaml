@@ -9,6 +9,3 @@ resources:
 commonLabels:
   environment: production
   managed-by: gitops
-
-patchesStrategicMerge:
-  - nodeSelector-fix.yaml

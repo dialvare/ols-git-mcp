@@ -21,6 +21,9 @@ metadata:
    app.openshift.io/vcs-path: "base/sample-app-mcp.yaml"
    app.kubernetes.io/kustomize-base: "base"
    app.kubernetes.io/kustomize-overlay: "overlays/prod"
+   app.kubernetes.io/part-of: "sample-app-mcp"
+   app.kubernetes.io/managed-by: "argocd"
+   argocd.argoproj.io/instance: "sample-app"
 spec:
  containers:
  - image: quay.io/sclorg/httpd-24-micro-c9s
