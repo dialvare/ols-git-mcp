@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-app-mcp
+  namespace: git-apps
+patches:
+  - op: replace
+    path: /spec/nodeSelector/node-role.kubernetes.io~1wrker
+    value: node-role.kubernetes.io/worker
