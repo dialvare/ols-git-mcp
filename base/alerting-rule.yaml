@@ -8,6 +8,7 @@ metadata:
     app: sample-app-mcp
     prometheus: git-apps-monitoring
     role: alert-rules
+    openshift.io/prometheus-rule-evaluation-scope: leaf-prometheus
 spec:
   groups:
     - name: sample-app-mcp.rules
