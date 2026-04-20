@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - sample-app-mcp.yaml
+  - alerting-rule.yaml
