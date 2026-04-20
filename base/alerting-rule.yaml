@@ -1,9 +1,12 @@
 ---
-apiVersion: observability.openshift.io/v1alpha1
-kind: AlertingRule
+apiVersion: monitoring.rhobs/v1
+kind: PrometheusRule
 metadata:
   name: sample-app-mcp-alerts
   namespace: git-apps
+  labels:
+    prometheus: k8s
+    role: alert-rules
 spec:
   groups:
     - name: sample-app-mcp.rules
