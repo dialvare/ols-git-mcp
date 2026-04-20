@@ -9,3 +9,6 @@ resources:
 commonLabels:
   environment: production
   managed-by: gitops
+
+patchesStrategicMerge:
+  - node-selector-patch.yaml
