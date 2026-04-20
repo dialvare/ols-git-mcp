@@ -24,6 +24,7 @@ metadata:
    app.kubernetes.io/part-of: "sample-app-mcp"
    app.kubernetes.io/managed-by: "argocd"
    argocd.argoproj.io/instance: "sample-app"
+   argocd.argoproj.io/sync-options: Replace=true
 spec:
  containers:
  - image: quay.io/sclorg/httpd-24-micro-c9s
