@@ -7,9 +7,6 @@ metadata:
 spec:
   logLevel: info
   retention: 1d
-  resourceSelector:
-    matchLabels:
-      app: sample-app-mcp
   prometheusConfig:
     replicas: 1
   alertmanagerConfig:

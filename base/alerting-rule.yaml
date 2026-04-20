@@ -5,6 +5,7 @@ metadata:
   name: sample-app-mcp-alerts
   namespace: git-apps
   labels:
+    app: sample-app-mcp
     prometheus: git-apps-monitoring
     role: alert-rules
 spec:
