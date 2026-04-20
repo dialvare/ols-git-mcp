@@ -13,7 +13,7 @@ spec:
     path: overlays/prod
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: git-apps-project
+    namespace: git-apps
   syncPolicy:
     automated:
       prune: true

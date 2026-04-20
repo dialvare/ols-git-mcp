@@ -1,13 +1,13 @@
 apiVersion: project.openshift.io/v1
 kind: Project
 metadata:
-  name: git-mcp
+  name: git-apps
 ---
 apiVersion: v1
 kind: Pod
 metadata:
  name: sample-app-mcp
- namespace: git-mcp
+ namespace: git-apps
  annotations:
    app.github.com/repo-url: "https://github.com/dialvare/sample-app-mcp"
    app.openshift.io/vcs-ref: "main"
