@@ -5,6 +5,7 @@ metadata:
   labels:
     openshift.io/cluster-monitoring: "true"
     app.kubernetes.io/part-of: sample-app-mcp
+    argocd.argoproj.io/managed-by: "openshift-gitops"
 ---
 apiVersion: v1
 kind: Pod
