@@ -3,5 +3,4 @@ kind: Kustomization
 
 resources:
   - sample-app-mcp.yaml
-  - monitoring-stack.yaml
   - alerting-rule.yaml
