@@ -16,9 +16,11 @@ metadata:
    app: sample-app-mcp
    app.kubernetes.io/name: sample-app-mcp
  annotations:
-   app.github.com/repo-url: "https://github.com/dialvare/sample-app-mcp"
+   app.github.com/repo-url: "https://github.com/dialvare/ols-git-mcp"
    app.openshift.io/vcs-ref: "main"
-   app.openshift.io/vcs-path: "sample-app-mcp.yaml"
+   app.openshift.io/vcs-path: "base/sample-app-mcp.yaml"
+   app.kubernetes.io/kustomize-base: "base"
+   app.kubernetes.io/kustomize-overlay: "overlays/prod"
 spec:
  containers:
  - image: quay.io/sclorg/httpd-24-micro-c9s
