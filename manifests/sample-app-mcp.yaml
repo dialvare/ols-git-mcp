@@ -1,12 +1,3 @@
-apiVersion: project.openshift.io/v1
-kind: Project
-metadata:
-  name: git-apps
-  labels:
-    openshift.io/cluster-monitoring: "true"
-    app.kubernetes.io/part-of: sample-app-mcp
-    argocd.argoproj.io/managed-by: "openshift-gitops"
----
 apiVersion: v1
 kind: Pod
 metadata:
@@ -15,12 +6,12 @@ metadata:
  labels:
    app: sample-app-mcp
    app.kubernetes.io/name: sample-app-mcp
+   environment: production
+   managed-by: gitops
  annotations:
    app.github.com/repo-url: "https://github.com/dialvare/ols-git-mcp"
    app.openshift.io/vcs-ref: "main"
-   app.openshift.io/vcs-path: "base/sample-app-mcp.yaml"
-   app.kubernetes.io/kustomize-base: "base"
-   app.kubernetes.io/kustomize-overlay: "overlays/prod"
+   app.openshift.io/vcs-path: "manifests/sample-app-mcp.yaml"
    app.kubernetes.io/part-of: "sample-app-mcp"
    app.kubernetes.io/managed-by: "argocd"
    argocd.argoproj.io/instance: "sample-app"

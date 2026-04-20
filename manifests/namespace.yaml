@@ -1,0 +1,10 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: git-apps
+  labels:
+    openshift.io/cluster-monitoring: "true"
+    app.kubernetes.io/part-of: sample-app-mcp
+    argocd.argoproj.io/managed-by: "openshift-gitops"
+    environment: production
+    managed-by: gitops

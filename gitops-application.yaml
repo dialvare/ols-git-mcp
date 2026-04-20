@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: 'https://github.com/dialvare/ols-git-mcp'
     targetRevision: main
-    path: overlays/prod
+    path: manifests
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: git-apps
