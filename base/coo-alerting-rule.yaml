@@ -1,22 +1,15 @@
 ---
-apiVersion: monitoring.coreos.com/v1
-kind: PrometheusRule
+apiVersion: observability.openshift.io/v1alpha1
+kind: AlertingRule
 metadata:
   name: sample-app-mcp-alerts
   namespace: git-apps
-  labels:
-    prometheus: k8s
-    role: alert-rules
 spec:
   groups:
     - name: sample-app-mcp.rules
       interval: 30s
       rules:
         - alert: PodNotScheduled
-          annotations:
-            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} cannot be scheduled"
-            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been in Pending state for more than 2 minutes due to scheduling issues."
-            runbook_url: "https://github.com/dialvare/ols-git-mcp"
           expr: |
             kube_pod_status_phase{namespace="git-apps", phase="Pending"} == 1
             and
@@ -26,11 +19,12 @@ spec:
             severity: warning
             component: sample-app-mcp
             incident: "true"
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} cannot be scheduled"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been in Pending state for more than 2 minutes due to scheduling issues."
+            runbook_url: "https://github.com/dialvare/ols-git-mcp"
 
         - alert: PodCrashLooping
-          annotations:
-            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping"
-            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted {{ $value }} times in the last 10 minutes."
           expr: |
             rate(kube_pod_container_status_restarts_total{namespace="git-apps"}[10m]) * 600 > 3
           for: 5m
@@ -38,11 +32,11 @@ spec:
             severity: critical
             component: sample-app-mcp
             incident: "true"
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted {{ $value }} times in the last 10 minutes."
 
         - alert: PodNotReady
-          annotations:
-            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is not ready"
-            description: "Pod {{ $labels.pod }} has been in a non-ready state for more than 3 minutes."
           expr: |
             kube_pod_status_ready{namespace="git-apps", condition="false"} == 1
           for: 3m
@@ -50,3 +44,6 @@ spec:
             severity: warning
             component: sample-app-mcp
             incident: "true"
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is not ready"
+            description: "Pod {{ $labels.pod }} has been in a non-ready state for more than 3 minutes."

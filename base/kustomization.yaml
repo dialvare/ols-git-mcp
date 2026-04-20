@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
   - sample-app-mcp.yaml
-  - alerting-rule.yaml
+  - coo-alerting-rule.yaml  # COO AlertingRule instead of PrometheusRule
