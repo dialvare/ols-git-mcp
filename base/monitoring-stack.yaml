@@ -12,3 +12,5 @@ spec:
       app: sample-app-mcp
   prometheusConfig:
     replicas: 1
+  alertmanagerConfig:
+    replicas: 1
