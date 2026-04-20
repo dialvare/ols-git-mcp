@@ -20,8 +20,6 @@ spec:
             runbook_url: "https://github.com/dialvare/ols-git-mcp"
           expr: |
             kube_pod_status_phase{namespace="git-apps", phase="Pending"} == 1
-            and
-            kube_pod_status_scheduled{namespace="git-apps", condition="false"} == 1
           for: 2m
           labels:
             severity: warning
