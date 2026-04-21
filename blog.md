@@ -46,3 +46,41 @@ Now that the Incident Detection MCP server is deployed, it's time to start with 
 
 ## Configure OpenShift Lightspeed
 
+With both MCP servers configured and ready to be consumed, the next step will be connecting them into OpenShift Lightspeed. Luckily the configuration in quite simple and straightforward, I only had to add the following lines to my OLSConfig custom resource and in a matter of seconds, the operator was ready again, but this time with extended habillties thanks to the two new MCP servers. Here you can find the lines I added: 
+
+```bash
+...
+spec:
+  featureGates:
+    - MCPServer
+  mcpServers:
+    - headers:
+        - name: Authorization
+          valueFrom:
+            secretRef:
+              name: github-mcp-token
+            type: secret
+      name: github-mcp-server
+      timeout: 30
+      url: 'https://api.githubcopilot.com/mcp/'
+    - headers:
+        - name: kubernetes-authorization
+          valueFrom:
+            type: kubernetes
+      name: cluster-health
+      timeout: 30
+      url: 'http://cluster-health-mcp-server.openshift-cluster-observability-operator.svc.cluster.local:8085/mcp'
+...
+```
+
+As you can see above, we only had to add two new stanzas. First, the `featureGates.MCPServer` to enable bringing custom MCPs into the AI assistant, and second the list of `mcpServers` we want to include. Under each MCP cofiguration we need to specify the *name*, *url*, and the *authorization header* that can be either the kubernetes one or a secret containing our header token. 
+
+Aditionally I have enabled the built-in OCP MCP server OpenShift Lightspeed provides by enabling the `introspectionEnabled: true` feature. This will allow the AI assistant to extract information from Kubernetes resources from the cluster. 
+
+## MCP servers in action
+
+The configuration part is over. It took me just ~5 min to get all the components running, and now I can just focus on accelerating and simplifying my daily OpenShift workflows. Making sure all the workloads and the cluster are healthy is one of the most critical tasks. So now you will see a practical example on how OpenShift Lightspeed helped me to identify, troubleshoot, and fix an incident in my cluster. 
+
+Everything starts with a simple question in OpenShift Lightspeed: *"Are there any active incidents in my cluster?"*
+
+![Active incidents query](images/Q1-1.png) 
