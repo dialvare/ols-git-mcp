@@ -10,7 +10,7 @@ With that foundation in place and my sample app already deployed in the cluster,
 
 ## Incident Detection MCP Server
 
-If you've ever been on-call, you know the pain of alert storms: dozens of alerts firing at once, and you're left trying to figure out which ones actually matter and what's the root cause. That's exactly the problem that the Incident Detection feature in the Cluster Observability Operator solves. It groups related alerts into incidents, shows them on a timeline color-coded by severity, and categorizes them by affected component. Instead of drowning in noise, you get a clear picture of what's happening. 
+You know the pain of alert storms: dozens of alerts firing at once, and you're left trying to figure out which ones actually matter and what's the root cause. That's exactly the problem that the Incident Detection feature in the Cluster Observability Operator solves. It groups related alerts into incidents, shows them on a timeline color-coded by severity, and categorizes them by affected component. Instead of drowning in noise, you get a clear picture of what's happening. 
 
 Now, the interesting part: there's an MCP server that exposes this functionality. Below you can find the steps I had to follow to install the Cluster Observability Operator, enable the Incidents feature and deploy the MCP server:
 
@@ -45,7 +45,7 @@ Now that the Incident Detection MCP server is deployed, it's time to start with 
 
 ## OpenShift Lightspeed configuration
 
-Now that both MCP servers are ready (the Incident Detection MCP deployed in-cluster and the GitHub MCP accessible remotely), the final step is connecting them to OpenShift Lightspeed. Luckily the configuration in quite simple and straightforward, I only had to add the following lines to my OLSConfig custom resource and in a matter of seconds, the operator was ready again, but this time with extended abilities thanks to the two new MCP servers. Here you can find the lines I added: 
+Now that both MCP servers are ready (the Incident Detection MCP deployed in-cluster and the GitHub MCP accessible remotely), the final step is connecting them to OpenShift Lightspeed. Luckily the [custom MCP server configuration](https://docs.redhat.com/en/documentation/red_hat_openshift_lightspeed/1.0/html/configure/ols-configuring-openshift-lightspeed#ols-enabling-mcp-server_ols-configuring-openshift-lightspeed) in quite simple and straightforward. I only had to add the following lines to my OLSConfig custom resource and in a matter of seconds, the operator was ready again, but this time with extended abilities thanks to the two new MCP servers. Here you can find the lines I added: 
 
 ```yaml
 ...
@@ -76,7 +76,7 @@ spec:
 
 As you can see above, I only had to add two new stanzas. First, the `featureGates.MCPServer` to enable bringing custom MCPs into the AI assistant, and second the list of MCPs to include. Under each `mcpServers` item, the configuration requires specifying the *name*, *url*, and the *authorization header* that can be either the kubernetes one or a secret containing the header token. 
 
-Additionally I have enabled the built-in OCP MCP server OpenShift Lightspeed provides by enabling the `introspectionEnabled: true` feature. This will allow the AI assistant to extract information from Kubernetes resources from the cluster. 
+Additionally I have enabled the [built-in MCP server](https://docs.redhat.com/en/documentation/red_hat_openshift_lightspeed/1.0/html/configure/ols-configuring-openshift-lightspeed#about-cluster-interaction_ols-configuring-openshift-lightspeed) OpenShift Lightspeed provides by enabling the `introspectionEnabled: true` feature. This will allow the AI assistant to extract information from Kubernetes resources from the cluster. 
 
 ## Walking through a real incident
 
@@ -98,7 +98,9 @@ There it is. The Alerting Rule I configured to detect issues in my *git-apps* na
 
 ![Failing pod query](images/Q2-1.png)
 
-Okay, there's something missconfigured in the *sample-app-mcp* application. It's still Pending and couldn't be assigned to any nodes. I'll check what's wrong in the Web Console and keep digging into the issue. I'll attach the Full YAML pod configuration and enable the new *Troubleshooting* mode. Now, let's let OpenShift Lightspeed figure out what's happening: **"What’s wrong with this pod?"**
+Okay, there's something missconfigured in the *sample-app-mcp* application. It's still Pending and couldn't be assigned to any nodes. I'll check what's wrong in the Web Console and keep digging into the issue. 
+
+Next, I'll attach the full YAML pod configuration and enable the new *Troubleshooting* mode. Now, let's let OpenShift Lightspeed figure out what's happening: **"What’s wrong with this pod?"**
 
 ![Troubleshooting and attachments](images/Q3-1.png)
 
@@ -106,7 +108,9 @@ In just a few seconds OpenShift Lightspeed analizes the YAML configuration and p
 
 ![Troubleshooting query](images/Q3-2.png)
 
-Typical mistake! Somebody introduced a typo in the YAML configuration. The nodeSelector is not correct and cannot be scheduled. In the same answer OpenShift Lightspeed provides the root cause and the fix. Now, let's see what's the current structure in my source-of-truth repository to see where the fix should be placed. Without leaving my cluster, I can ask **"Can you  now analyze the Git structure and contents? Use the pod annotations to find the repo info"**
+Typical mistake! Somebody introduced a typo in the YAML configuration. The nodeSelector is not correct and cannot be scheduled. In the same answer OpenShift Lightspeed provides the root cause and the fix. 
+
+Now, let's see what's the current structure in my source-of-truth repository to see where the fix should be placed. Without leaving my cluster, I can ask **"Can you  now analyze the Git structure and contents? Use the pod annotations to find the repo info"**
 
 ![Git structure query](images/Q4-1.png)
 
@@ -134,14 +138,14 @@ A really accurate description. Everything is looking good: the title, the curren
 
 ![Pull request merge](images/Q9-1.png)
 
-With a simple query in natural language I have changed the configuration of my application. Easily, secure and fast, all my OpenShift clusters now applying the fix automatically thanks to the GitOps magic! Finally, let's verify the app is correctly running by asking **"Is the pod running now?"** 
+With a simple query in natural language I have changed the configuration of my application. Easily, secure and fast, all my OpenShift clusters are now applying the fix automatically thanks to the GitOps magic! Finally, let's verify the app is correctly running by asking **"Is the pod running now?"** 
 
 ![Pod running](images/Q10.png)
 
 Excellent! The application has been scheduled in the worker node and now it's running. The incident I detected a few minutes ago has been easily resolved, with assisted guidance, following all best practices and standards, and without leaving my cluster, where my workloads live. 
 
-## Thoughts
+## Final Thoughts
 
 In this blogpost, I built a workflow that traditionally requires jumping between the OpenShift Console, GitHub UI, Prometheus dashboards, and oc commands. By connecting the Incident Detection and GitHub MCP servers to OpenShift Lightspeed, and combined with the built-in introspection MCP server, I made use of a unified OpenShift Lightspeed interface that handles the entire incident lifecycle through natural language conversation—from detection to deployment.
 
-MCP servers transform OpenShift Lightspeed from an assistant into an intelligent orchestrator. The GitHub MCP provides source control management, the Incident Detection MCP delivers observability insights, and the built-in OCP MCP enables cluster introspection. Together, they turn simple questions into sophisticated multi-system workflows, fundamentally changing how developers interact with their infrastructure.
+MCP servers transform OpenShift Lightspeed from an AI assistant into an intelligent orchestrator. The GitHub MCP provides source control management, the Incident Detection MCP delivers observability insights, and the built-in MCP enables cluster introspection. Together, they turn simple questions into sophisticated multi-system workflows, fundamentally changing how developers interact with their infrastructure.
