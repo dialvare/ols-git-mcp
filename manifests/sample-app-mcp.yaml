@@ -36,7 +36,7 @@ spec:
  dnsPolicy: ClusterFirst
  enableServiceLinks: true
  nodeSelector:
-   node-role.kubernetes.io/wrker: ""
+   node-role.kubernetes.io/worker: ""
  preemptionPolicy: PreemptLowerPriority
  priority: 0
  restartPolicy: Always
