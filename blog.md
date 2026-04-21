@@ -45,7 +45,7 @@ Now that the Incident Detection MCP server is deployed, it's time to start with 
 
 ## OpenShift Lightspeed configuration
 
-Now that both MCP servers are ready (the Incident Detection MCP deployed in-cluster and the GitHub MCP accessible remotely), the final step is connecting them to OpenShift Lightspeed. Luckily the [custom MCP server configuration](https://docs.redhat.com/en/documentation/red_hat_openshift_lightspeed/1.0/html/configure/ols-configuring-openshift-lightspeed#ols-enabling-mcp-server_ols-configuring-openshift-lightspeed) in quite simple and straightforward. I only had to add the following lines to my OLSConfig custom resource and in a matter of seconds, the operator was ready again, but this time with extended abilities thanks to the two new MCP servers. Here you can find the lines I added: 
+Now that both MCP servers are ready (the Incident Detection MCP deployed in-cluster and the GitHub MCP accessible remotely), the final step is connecting them to OpenShift Lightspeed. Luckily the [custom MCP server configuration](https://docs.redhat.com/en/documentation/red_hat_openshift_lightspeed/1.0/html/configure/ols-configuring-openshift-lightspeed#ols-enabling-mcp-server_ols-configuring-openshift-lightspeed) is quite simple and straightforward. I only had to add the following lines to my OLSConfig custom resource and in a matter of seconds, the operator was ready again, but this time with extended abilities thanks to the two new MCP servers. Here you can find the lines I added: 
 
 ```yaml
 ...
@@ -90,7 +90,7 @@ Uh-oh! There's a problem with one of my workloads. But wait, how can OpenShift L
 
 ![Active incidents query MCP server](images/Q1-2.png)
 
-Here I can see that the *get_incidents* tool was invoked and collected the information. OpenShift Lightspeed even provides me a link to see the Incident that is firing. Let's see it in the Web Console:
+Here I can see that the *get_incidents* tool was invoked and collected the information. OpenShift Lightspeed even provides me with a link to see the Incident that is firing. Let's see it in the Web Console:
 
 ![Alert firing](images/Q1-3.png)
 
@@ -98,13 +98,13 @@ There it is. The Alerting Rule I configured to detect issues in my *git-apps* na
 
 ![Failing pod query](images/Q2-1.png)
 
-Okay, there's something missconfigured in the *sample-app-mcp* application. It's still Pending and couldn't be assigned to any nodes. I'll check what's wrong in the Web Console and keep digging into the issue. 
+Okay, there's something misconfigured in the *sample-app-mcp* application. It's still Pending and couldn't be assigned to any nodes. I'll check what's wrong in the Web Console and keep digging into the issue. 
 
 Next, I'll attach the full YAML pod configuration and enable the new *Troubleshooting* mode. Now, let's let OpenShift Lightspeed figure out what's happening: **"What’s wrong with this pod?"**
 
 ![Troubleshooting and attachments](images/Q3-1.png)
 
-In just a few seconds OpenShift Lightspeed analizes the YAML configuration and provides a response: 
+In just a few seconds OpenShift Lightspeed analyzes the YAML configuration and provides a response: 
 
 ![Troubleshooting query](images/Q3-2.png)
 
