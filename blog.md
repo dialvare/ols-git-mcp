@@ -83,4 +83,64 @@ The configuration part is over. It took me just ~5 min to get all the components
 
 Everything starts with a simple question in OpenShift Lightspeed: *"Are there any active incidents in my cluster?"*
 
-![Active incidents query](images/Q1-1.png) 
+![Active incidents query](images/Q1-1.png)
+
+Oh now! Panic!!! There's a problem with one of my workloads. But, wait... how can OpenShift Lightspeed understand what's happening? Where is this information coming from? Of course, our Incidents MCP server:
+
+![Active incidents query MCP server](images/Q1-2.png)
+
+Here I can see that the *get_incidents* tool was invoked and collected the information. OpenShift Lightspeed even provides me a link to see the Incident that is firing. Let's see it in the Web Console:
+
+![Alert firing](images/Q1-3.png)
+
+There it is. The Alerting Rule I configured to detect issues in my *git-apps* namespace has been triggered. Time to troubleshoot the issue... I'll start by identifying the failing pod by asking *"Which pods are not running in the git-apps namespace?"*
+
+![Failing pod query](images/Q2-1.png)
+
+Okay, there's something missconfigured in the *sample-app-mcp* application. It's still Pending and couldn't be assigned to any nodes. I'll check what's wrong in the Web Console and keep digging into the issue. I'll attach the Full YAML pod configuration and enable the new *Troubleshooting* mode. Now, let's let OpenShift Lightspeed figure out what's happening: *"What’s wrong with this pod?"*
+
+![Troubleshooting and attachments](images/Q3-1.png)
+
+In just a few seconds OpenShift Lightspeed analizes the YAML configuration and provides a response: 
+
+![Troubleshooting query](images/Q3-2.png)
+
+Typical mistake! Somebody introduced a typo in the YAML configuration. The nodeSelector is not correct and cannot be scheduled. In the same answer OpenShift Lightspeed provides the root cause and the fix. Fantastic! Now, let's see what's the current structure in my source-of-truth repository to see where the fix should be placed. Without leaving my cluster, I can ask *"Can you  now analyze the Git structure and contents? Use the pod annotations to find the repo info"*
+
+![Git structure query](images/Q4-1.png)
+
+How was OpenShift Lightspeed able to know what's the GitHub repo? Really simple- I have added that information as anotations inside the pod YAML (repo URL, path, brach, etc)
+
+And now we have a detailed explaination of all the components. And this is the first time the GitHub MCP server has entered in action. OpenShift Lightspeed invoked the *get_file_contents* tool to fetch the repo information. 
+
+Time to fix the issue. I don't want to break anything, speciallñy in production clusters, so a save approach will be creating a new branch where the correct pod configuration will be added. All this with a simple query: *"Open a new branch and add the fix to the nodeSelector"*
+
+![Branch and fix query](images/Q5-1.png)
+
+The power of MCPs unchained! Three MCP tools in action to help me with my question: *create_branch*, *get_file_contents* and *create_or_update_file*. The names are quite desciptive on what each of them do, but before merging it, I'll act as human in the loop and verify the changes with *"Show me the updated file"*
+
+![Show updates query](images/Q6-1.png)
+
+Cool! My app manifest now contains the fixed nodeSelector. It's safe to open a new pull request. I'll indicate the name of the PR and let our powerfull LLM to generate the description: *"Now, open a pull request titled 'Fix nodeSelector typo preventing pod scheduling'"*
+
+![Pull request query](images/Q7-1.png)
+
+The response contains a link to the PR, but one of the advantages of MCP servers is being able to connect and manage different systems from a single place: our OpenShift cluster, so I prefer to check the PR from here: *"Show me the details of the latest PR"*
+
+![Pull request details](images/Q8-1.png)
+
+A really accurate description. Everything is looking good: the title, the current and destination branches, the description and of course, the correct app nodeSelector. Ready to apply the fix: *"Please merge the PR #3"*
+
+![Pull request merge](images/Q9-1.png)
+
+With a simple query in natural language I have changed the configuration of my application. Easily, secure and fast, all my OpenShift clusters now applying the fix automatically thanks to the GitOps magic! Fianlly, let's verify the app is correctly running by asking *"Is the pod running now?"* 
+
+![Pod running](images/Q10.png)
+
+Fantastic! Our application has been scheduled in the worker node and now it's running. The incident we detected a few minutes ago has been easily resolved, with assisted guidance, following all best practices and standarts, and without leaving my cluster, where my workloads live. 
+
+## Thoughts
+
+In just ~5 minutes of setup, I built a workflow that traditionally requires jumping between the OpenShift Console, GitHub UI, Prometheus dashboards, and oc commands. By connecting the Incident Detection and GitHub MCP servers to OpenShift Lightspeed, and combined with the built-in introscpection MCP server, I created a unified interface that handles the entire incident lifecycle through natural language conversation—from detection to deployment.
+
+MCP servers transform OpenShift Lightspeed from a assistant into an intelligent orchestrator. The GitHub MCP provides source control management, the Incident Detection MCP delivers observability insights, and the built-in OCP MCP enables cluster introspection. Together, they turn simple questions into sophisticated multi-system workflows, fundamentally changing how developers interact with their infrastructure.
